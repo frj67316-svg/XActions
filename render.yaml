@@ -23,8 +23,6 @@ services:
         value: http
       - key: XACTIONS_MODE
         value: local
-      - key: XACTIONS_SESSION_COOKIE
-        sync: false
       - key: OPENROUTER_API_KEY
         sync: false
       - key: PUPPETEER_EXECUTABLE_PATH
