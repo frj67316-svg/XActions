@@ -3980,8 +3980,6 @@ function printBanner(pluginCount, pluginToolCount) {
  */
 async function startHttpTransport() {
   const { default: express } = await import('express');
-  const { createMcpPaymentMiddleware, mcpPricingHandler } = await import('./x402-mcp.js');
-
   const app = express();
   app.use(express.json());
 
@@ -3992,12 +3990,6 @@ async function startHttpTransport() {
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok', transport: 'http', tools: TOOLS.length, sessions: sessions.size });
   });
-
-  // x402 pricing discovery (free endpoint — no payment required)
-  app.get('/mcp/pricing', mcpPricingHandler);
-
-  // x402 payment middleware — gates priced tool calls before reaching the MCP handler
-  app.use(createMcpPaymentMiddleware());
 
   // MCP endpoint — handles POST (messages), GET (SSE stream), DELETE (session close)
   app.all('/mcp', async (req, res) => {
@@ -4046,11 +4038,7 @@ async function startHttpTransport() {
   app.listen(port, () => {
     console.error(`✅ Server running on HTTP — http://0.0.0.0:${port}/mcp`);
     console.error('   Ready for remote MCP client connections.');
-    if (process.env.X402_PAY_TO_ADDRESS) {
-      console.error(`💰 x402 payments enabled — pricing: http://0.0.0.0:${port}/mcp/pricing`);
-    } else {
-      console.error('ℹ️  x402 payments disabled (set X402_PAY_TO_ADDRESS to enable per-tool billing)');
-    }
+    console.error('   Free mode (x402 disabled)');
     console.error('');
   });
 }
