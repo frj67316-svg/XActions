@@ -7,6 +7,37 @@
 
 services:
   # ─────────────────────────────────────────────────────────────────────────────
+  # MCP Server for Grok — HTTP transport for AI agents
+  # محتاج XACTIONS_SESSION_COOKIE عشان ينشر تويتات
+  # ─────────────────────────────────────────────────────────────────────────────
+  - type: web
+    name: xactions-mcp
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+      - key: MCP_TRANSPORT
+        value: http
+      - key: XACTIONS_MODE
+        value: local
+      - key: XACTIONS_SESSION_COOKIE
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: PUPPETEER_EXECUTABLE_PATH
+        value: /usr/bin/chromium
+      - key: PUPPETEER_HEADLESS
+        value: "true"
+      - key: PUPPETEER_NO_SANDBOX
+        value: "true"
+
+  # ─────────────────────────────────────────────────────────────────────────────
   # API Server
   # ─────────────────────────────────────────────────────────────────────────────
   - type: web
